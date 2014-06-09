@@ -62,8 +62,9 @@
      * Enable or disable range selection.
      *
      * @param enable {boolean} Indicate is range selection has to be enabled.
+     * @param callback {function} Callback to apply to the whole range
      */
-    Checkboxes.prototype.range = function(enable) {
+    Checkboxes.prototype.range = function(enable, callback) {
         if (enable) {
             var instance = this;
             this.$context.on('click.checkboxes.range', ':checkbox', function(e) {
@@ -74,9 +75,13 @@
                         to = $checkboxes.index($checkbox),
                         start = Math.min(from, to),
                         end = Math.max(from, to) + 1;
-                    $checkboxes.slice(start, end)
-                        .filter(':not(:disabled)')
-                        .prop('checked', $checkbox.prop('checked'));
+                    var $slice = $checkboxes.slice(start, end)
+                    var checked = $checkbox.prop('checked');
+                    $slice.filter(':not(:disabled)')
+                        .prop('checked', checked);
+                    if (callback) {
+                        callback($slice, checked);
+                    }
                 }
                 instance.$last = $checkbox;
             });
